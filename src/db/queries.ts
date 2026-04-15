@@ -145,6 +145,34 @@ export async function insertSubscriber(email: string) {
     .returning();
 }
 
+export async function confirmSubscriber(id: string) {
+  return db
+    .update(subscribers)
+    .set({ confirmedAt: new Date() })
+    .where(eq(subscribers.id, id))
+    .returning();
+}
+
+export async function unsubscribe(id: string) {
+  return db
+    .update(subscribers)
+    .set({ unsubscribedAt: new Date() })
+    .where(eq(subscribers.id, id))
+    .returning();
+}
+
+export async function getConfirmedSubscribers() {
+  return db
+    .select()
+    .from(subscribers)
+    .where(
+      and(
+        sql`${subscribers.confirmedAt} IS NOT NULL`,
+        sql`${subscribers.unsubscribedAt} IS NULL`
+      )
+    );
+}
+
 export async function getRecentDigests(days: number = 7) {
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - days);

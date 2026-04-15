@@ -3,7 +3,8 @@ import { fetchTopStories } from "./hn-client.mts";
 import { filterForAIRelevance } from "./ai-filter.mts";
 import { summarizeStory, summarizeDaySummary } from "./ai-summarize.mts";
 import { generateEmbeddings } from "./ai-embed.mts";
-import { insertDigestWithStories } from "../src/db/queries";
+import { insertDigestWithStories, getConfirmedSubscribers } from "../src/db/queries";
+import { sendDigestToAll } from "../src/lib/mail";
 
 type Slot = "morgen" | "mittag" | "abend";
 
@@ -95,6 +96,16 @@ async function main() {
   console.log(`\n✓ Digest "${result.digest.title}" created with ${result.stories.length} stories.`);
   console.log(`  ID: ${result.digest.id}`);
   console.log(`  URL: /digest/${dateStr}-${slot}`);
+
+  // 9. Send newsletter to confirmed subscribers
+  const subs = await getConfirmedSubscribers();
+  if (subs.length > 0) {
+    console.log(`\n[7/7] Sending newsletter to ${subs.length} subscribers...`);
+    const { sent, failed } = await sendDigestToAll(subs, result.digest, result.stories);
+    console.log(`  → ${sent} sent, ${failed} failed`);
+  } else {
+    console.log("\n[7/7] No confirmed subscribers — skipping newsletter.");
+  }
 }
 
 main().catch((err) => { console.error("[flinkbase] FATAL:", err); process.exit(1); });
