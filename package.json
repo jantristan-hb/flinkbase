@@ -20,6 +20,7 @@
     "@astrojs/node": "^10.0.5",
     "@astrojs/sitemap": "^3.7.2",
     "@google/generative-ai": "^0.24.1",
+    "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.2.2",
     "astro": "^6.1.7",
     "dotenv": "^17.4.2",
