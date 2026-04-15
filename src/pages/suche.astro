@@ -1,6 +1,7 @@
 ---
 import Layout from "@/components/Layout.astro";
 import { searchStoriesByEmbedding } from "@/db/queries";
+import { generateEmbedding } from "@/lib/embedding";
 import { pageSEO } from "@/lib/seo";
 import { strings } from "@/lib/strings";
 
@@ -10,10 +11,9 @@ let searchError = false;
 
 if (query) {
   try {
-    const { generateEmbedding } = await import("../../scripts/ai-embed.mts");
     const embedding = await generateEmbedding(query);
     const rows = await searchStoriesByEmbedding(embedding, 20);
-    results = (rows as any).rows ?? rows;
+    results = Array.isArray(rows) ? rows : (rows as any).rows ?? [];
   } catch (e) {
     console.error("Search error:", e);
     searchError = true;
