@@ -1,0 +1,11 @@
+---
+import { strings } from "@/lib/strings";
+import { digestSlug } from "@/lib/date";
+interface NavDigest { digestDate: string; slot: string; title: string; }
+interface Props { prev: NavDigest | null; next: NavDigest | null; }
+const { prev, next } = Astro.props;
+---
+<nav class="mt-8 flex items-center justify-between border-t border-zinc-200 pt-4" aria-label="Digest Navigation">
+  {prev ? <a href={`/digest/${digestSlug(prev.digestDate, prev.slot)}`} class="text-sm text-zinc-600 hover:text-zinc-900">{strings.prevDigest}</a> : <span />}
+  {next ? <a href={`/digest/${digestSlug(next.digestDate, next.slot)}`} class="text-sm text-zinc-600 hover:text-zinc-900">{strings.nextDigest}</a> : <span />}
+</nav>
