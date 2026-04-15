@@ -1,0 +1,19 @@
+---
+import Layout from "@/components/Layout.astro";
+import DigestCard from "@/components/DigestCard.astro";
+import Pagination from "@/components/Pagination.astro";
+import { getDigestsPaginated } from "@/db/queries";
+import { pageSEO } from "@/lib/seo";
+import { strings } from "@/lib/strings";
+
+const page = Number(Astro.url.searchParams.get("seite") ?? "1");
+const { items, totalPages } = await getDigestsPaginated(page, 20);
+const seo = pageSEO(strings.archivTitle, `Alle AI Digests im Überblick — Seite ${page}`, "/archiv");
+---
+<Layout seo={seo}>
+  <h1 class="mb-8 text-2xl font-bold">{strings.archivTitle}</h1>
+  {items.length > 0 ? (
+    <div class="space-y-4">{items.map((digest) => <DigestCard digest={digest} />)}</div>
+  ) : <p class="text-zinc-500">Noch keine Digests vorhanden.</p>}
+  <Pagination currentPage={page} totalPages={totalPages} basePath="/archiv" />
+</Layout>

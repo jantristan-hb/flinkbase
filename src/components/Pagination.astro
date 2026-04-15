@@ -1,0 +1,14 @@
+---
+interface Props { currentPage: number; totalPages: number; basePath: string; }
+const { currentPage, totalPages, basePath } = Astro.props;
+const prevPage = currentPage > 1 ? currentPage - 1 : null;
+const nextPage = currentPage < totalPages ? currentPage + 1 : null;
+function pageUrl(page: number): string { return page === 1 ? basePath : `${basePath}?seite=${page}`; }
+---
+{totalPages > 1 && (
+  <nav class="mt-8 flex items-center justify-center gap-4 text-sm" aria-label="Seitennummerierung">
+    {prevPage ? <a href={pageUrl(prevPage)} class="text-zinc-600 hover:text-zinc-900">← Zurück</a> : <span class="text-zinc-300">← Zurück</span>}
+    <span class="text-zinc-500">Seite {currentPage} von {totalPages}</span>
+    {nextPage ? <a href={pageUrl(nextPage)} class="text-zinc-600 hover:text-zinc-900">Weiter →</a> : <span class="text-zinc-300">Weiter →</span>}
+  </nav>
+)}

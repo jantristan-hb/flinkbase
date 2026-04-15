@@ -1,0 +1,16 @@
+---
+import type { Digest } from "@/db/schema";
+import { formatDateLong, digestSlug } from "@/lib/date";
+import { strings } from "@/lib/strings";
+interface Props { digest: Digest; }
+const { digest } = Astro.props;
+const url = `/digest/${digestSlug(digest.digestDate, digest.slot)}`;
+---
+<a href={url} class="block rounded-lg border border-zinc-200 p-4 hover:border-zinc-400 transition-colors">
+  <div class="flex items-baseline justify-between">
+    <h3 class="font-semibold leading-snug">{digest.title}</h3>
+    <span class="ml-4 shrink-0 text-xs text-zinc-500">{strings.slotLabels[digest.slot]}</span>
+  </div>
+  <p class="mt-1 text-sm text-zinc-600 line-clamp-2">{digest.description}</p>
+  <time class="mt-2 block text-xs text-zinc-400" datetime={digest.publishedAt.toISOString()}>{formatDateLong(digest.publishedAt)}</time>
+</a>

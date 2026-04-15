@@ -1,0 +1,26 @@
+---
+import Layout from "@/components/Layout.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import DigestCard from "@/components/DigestCard.astro";
+import { getDigestsByMonth } from "@/db/queries";
+import { pageSEO } from "@/lib/seo";
+import { formatMonthYear } from "@/lib/date";
+import { strings } from "@/lib/strings";
+
+const { path } = Astro.params;
+const match = (path as string).match(/^(\d{4})\/(\d{2})$/);
+if (!match) return Astro.redirect("/archiv");
+
+const year = Number(match[1]);
+const month = Number(match[2]);
+const digests = await getDigestsByMonth(year, month);
+const monthLabel = formatMonthYear(year, month);
+const seo = pageSEO(`${strings.archivTitle} — ${monthLabel}`, `AI Digests aus ${monthLabel}`, `/archiv/${year}/${String(month).padStart(2, "0")}`);
+---
+<Layout seo={seo}>
+  <Breadcrumb items={[{ label: "Home", href: "/" }, { label: strings.archivTitle, href: "/archiv" }, { label: monthLabel }]} />
+  <h1 class="mb-8 text-2xl font-bold">{monthLabel}</h1>
+  {digests.length > 0 ? (
+    <div class="space-y-4">{digests.map((digest) => <DigestCard digest={digest} />)}</div>
+  ) : <p class="text-zinc-500">Keine Digests in diesem Monat.</p>}
+</Layout>
