@@ -1,13 +1,59 @@
 ---
-// flinkbase — AI News Digest
+import Layout from "@/components/Layout.astro";
+import StoryItem from "@/components/StoryItem.astro";
+import NewsletterSignup from "@/components/NewsletterSignup.astro";
+import { getLatestDigest, getStoriesForDigest } from "@/db/queries";
+import { pageSEO, newsArticleJsonLd } from "@/lib/seo";
+import { strings } from "@/lib/strings";
+import { formatDateLong } from "@/lib/date";
+
+const digest = await getLatestDigest();
+const storiesList = digest ? await getStoriesForDigest(digest.id) : [];
+
+const seo = pageSEO(strings.siteTagline, strings.siteDescription, "/");
+const jsonLd = digest ? newsArticleJsonLd(digest) : undefined;
 ---
-<html lang="de">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>flinkbase — KI-Nachrichten auf Deutsch</title>
-  </head>
-  <body>
-    <h1>flinkbase</h1>
-  </body>
-</html>
+
+<Layout seo={seo} jsonLd={jsonLd}>
+  <section class="mb-12 text-center">
+    <h1 class="text-4xl font-bold tracking-tight">{strings.siteTagline}</h1>
+    <p class="mt-3 text-lg text-zinc-600">{strings.heroSubline}</p>
+  </section>
+
+  {digest ? (
+    <section>
+      <div class="mb-6 flex items-baseline justify-between">
+        <h2 class="text-2xl font-bold">{digest.title}</h2>
+        <time class="text-sm text-zinc-500" datetime={digest.publishedAt.toISOString()}>
+          {formatDateLong(digest.publishedAt)} · {strings.slotLabels[digest.slot]}
+        </time>
+      </div>
+      <div class="divide-y divide-zinc-100">
+        {storiesList.map((story) => <StoryItem story={story} />)}
+      </div>
+      {digest.summaryOfDay && (
+        <div class="mt-6 rounded-lg border-l-4 border-zinc-900 bg-zinc-50 p-4">
+          <p class="text-sm font-semibold text-zinc-500">{strings.dayInsightLabel}</p>
+          <p class="mt-1 text-zinc-700">{digest.summaryOfDay}</p>
+        </div>
+      )}
+      <div class="mt-6 text-center">
+        <a href={`/digest/${digest.digestDate}-${digest.slot}`} class="text-sm text-zinc-500 hover:text-zinc-700">
+          Permalink zu diesem Digest →
+        </a>
+      </div>
+    </section>
+  ) : (
+    <p class="text-center text-zinc-500">Noch kein Digest verfügbar. Komm bald wieder!</p>
+  )}
+
+  <div class="mt-12">
+    <NewsletterSignup />
+  </div>
+
+  <div class="mt-8 text-center">
+    <a href="/archiv" class="text-sm font-medium text-zinc-900 hover:underline">
+      Alle Digests im Archiv →
+    </a>
+  </div>
+</Layout>

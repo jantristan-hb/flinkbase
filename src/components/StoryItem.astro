@@ -1,0 +1,37 @@
+---
+import type { Story } from "@/db/schema";
+import { strings } from "@/lib/strings";
+
+interface Props {
+  story: Story;
+}
+
+const { story } = Astro.props;
+---
+
+<article class="py-4">
+  <h3 class="text-lg font-semibold leading-snug">{story.headlineDe}</h3>
+  <p class="mt-2 text-zinc-700 leading-relaxed">{story.summary}</p>
+  <p class="mt-2 text-sm font-medium text-zinc-900">
+    <span class="text-zinc-500">{strings.whyRelevantLabel}:</span> {story.whyRelevant}
+  </p>
+  <div class="mt-2 flex flex-wrap items-center gap-3 text-sm text-zinc-500">
+    {story.sourceUrl && (
+      <a href={story.sourceUrl} target="_blank" rel="noopener noreferrer" class="hover:text-zinc-700">
+        Original: {story.headlineEn}
+      </a>
+    )}
+    <span>·</span>
+    <a href={story.hnUrl} target="_blank" rel="noopener noreferrer" class="hover:text-zinc-700">HN-Diskussion</a>
+    {story.tags.length > 0 && (
+      <>
+        <span>·</span>
+        <div class="flex gap-1">
+          {story.tags.map((tag) => (
+            <a href={`/suche?q=${encodeURIComponent(tag)}`} class="rounded bg-zinc-100 px-1.5 py-0.5 text-xs hover:bg-zinc-200">{tag}</a>
+          ))}
+        </div>
+      </>
+    )}
+  </div>
+</article>
