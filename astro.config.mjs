@@ -6,6 +6,9 @@ export default defineConfig({
   output: "server",
   adapter: node({ mode: "standalone" }),
   site: "https://flinkbase.com",
+  security: {
+    checkOrigin: false,
+  },
   vite: {
     plugins: [tailwindcss()],
   },
