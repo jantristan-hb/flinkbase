@@ -1,0 +1,45 @@
+---
+import Layout from "@/components/Layout.astro";
+import { searchStoriesByEmbedding } from "@/db/queries";
+import { pageSEO } from "@/lib/seo";
+import { strings } from "@/lib/strings";
+
+const query = Astro.url.searchParams.get("q")?.trim() ?? "";
+let results: any[] = [];
+let searchError = false;
+
+if (query) {
+  try {
+    const { generateEmbedding } = await import("../../scripts/ai-embed.mts");
+    const embedding = await generateEmbedding(query);
+    const rows = await searchStoriesByEmbedding(embedding, 20);
+    results = (rows as any).rows ?? rows;
+  } catch (e) {
+    console.error("Search error:", e);
+    searchError = true;
+  }
+}
+
+const seo = pageSEO(query ? `"${query}" — ${strings.searchTitle}` : strings.searchTitle, "Semantische Suche über alle AI Digests auf flinkbase.com", "/suche");
+---
+<Layout seo={seo}>
+  <h1 class="mb-6 text-2xl font-bold">{strings.searchTitle}</h1>
+  <form method="GET" action="/suche" class="mb-8 flex gap-2">
+    <input type="text" name="q" value={query} placeholder={strings.searchPlaceholder}
+      class="flex-1 rounded-md border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500" />
+    <button type="submit" class="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700">{strings.searchButton}</button>
+  </form>
+  {query && !searchError && results.length > 0 && (
+    <div class="space-y-4">
+      {results.map((row: any) => (
+        <a href={`/digest/${row.digest_date}-${row.slot}`} class="block rounded-lg border border-zinc-200 p-4 hover:border-zinc-400 transition-colors">
+          <h3 class="font-semibold">{row.headline_de}</h3>
+          <p class="mt-1 text-sm text-zinc-600 line-clamp-2">{row.summary}</p>
+          <div class="mt-2 flex gap-2 text-xs text-zinc-400"><span>{row.digest_date}</span><span>·</span><span>{row.digest_title}</span></div>
+        </a>
+      ))}
+    </div>
+  )}
+  {query && !searchError && results.length === 0 && <p class="text-zinc-500">{strings.noResults}</p>}
+  {searchError && <p class="text-red-600">Suche fehlgeschlagen. Bitte versuche es erneut.</p>}
+</Layout>
