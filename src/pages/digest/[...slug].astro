@@ -34,10 +34,10 @@ const dateParts = parsed.date.split("-").map(Number);
 
   <article>
     <header class="mb-8">
-      <h1 class="text-2xl font-bold leading-tight">{digest.title}</h1>
-      <time class="mt-2 block text-sm text-zinc-500" datetime={digest.publishedAt.toISOString()}>
+      <time class="text-sm text-zinc-500" datetime={digest.publishedAt.toISOString()}>
         {formatDateLong(digest.publishedAt)} · {strings.slotLabels[digest.slot]}
       </time>
+      <h1 class="mt-1 text-2xl font-bold leading-tight">{digest.title}</h1>
     </header>
 
     {paywalled ? (

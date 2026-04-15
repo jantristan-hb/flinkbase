@@ -22,11 +22,11 @@ const jsonLd = digest ? newsArticleJsonLd(digest) : undefined;
 
   {digest ? (
     <section>
-      <div class="mb-6 flex items-baseline justify-between">
-        <h2 class="text-2xl font-bold">{digest.title}</h2>
+      <div class="mb-6">
         <time class="text-sm text-zinc-500" datetime={digest.publishedAt.toISOString()}>
           {formatDateLong(digest.publishedAt)} · {strings.slotLabels[digest.slot]}
         </time>
+        <h2 class="mt-1 text-2xl font-bold leading-tight">{digest.title}</h2>
       </div>
       <div class="divide-y divide-zinc-100">
         {storiesList.map((story) => <StoryItem story={story} />)}
