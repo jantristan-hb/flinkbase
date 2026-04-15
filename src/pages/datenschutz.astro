@@ -1,0 +1,23 @@
+---
+import Layout from "@/components/Layout.astro";
+import { pageSEO } from "@/lib/seo";
+import { strings } from "@/lib/strings";
+export const prerender = true;
+const seo = pageSEO(strings.privacyTitle, "Datenschutzerklärung — flinkbase.com", "/datenschutz");
+---
+<Layout seo={seo}>
+  <h1 class="mb-6 text-2xl font-bold">{strings.privacyTitle}</h1>
+  <div class="prose prose-zinc max-w-none">
+    <h2>1. Verantwortlicher</h2>
+    <p>AKARA Solutions GmbH, Feldstraße 97, 25421 Pinneberg.<br />E-Mail: info@akara-solutions.de</p>
+    <h2>2. Erhobene Daten</h2>
+    <p><strong>Newsletter-Anmeldung:</strong> E-Mail-Adresse zum Zweck des Newsletter-Versands. Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO.</p>
+    <p><strong>Server-Logfiles:</strong> IP-Adresse, Zeitstempel, angeforderte URL. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.</p>
+    <h2>3. Google AdSense</h2>
+    <p>Diese Website nutzt Google AdSense. Weitere Informationen: <a href="https://policies.google.com/privacy">Google Datenschutzerklärung</a>.</p>
+    <h2>4. Ihre Rechte</h2>
+    <p>Auskunft, Berichtigung, Löschung, Einschränkung. Kontakt: info@akara-solutions.de.</p>
+    <h2>5. Newsletter-Abmeldung</h2>
+    <p>Jederzeit per E-Mail an info@akara-solutions.de mit Betreff "Abmeldung".</p>
+  </div>
+</Layout>

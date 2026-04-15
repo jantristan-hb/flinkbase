@@ -1,0 +1,22 @@
+---
+import Layout from "@/components/Layout.astro";
+import { pageSEO } from "@/lib/seo";
+import { strings } from "@/lib/strings";
+export const prerender = true;
+const seo = pageSEO(strings.imprintTitle, "Impressum — flinkbase.com", "/impressum");
+---
+<Layout seo={seo}>
+  <h1 class="mb-6 text-2xl font-bold">{strings.imprintTitle}</h1>
+  <div class="prose prose-zinc max-w-none">
+    <h2>Angaben gemäß § 5 TMG</h2>
+    <p>AKARA Solutions GmbH<br />Feldstraße 97<br />25421 Pinneberg</p>
+    <h2>Kontakt</h2>
+    <p>Telefon: +49 40-228216020<br />E-Mail: info@akara-solutions.de<br />Web: <a href="https://akara-solutions.de">akara-solutions.de</a></p>
+    <h2>Registereintrag</h2>
+    <p>Registergericht: Amtsgericht Pinneberg<br />Handelsregister: HRB 4366<br />USt-IdNr.: DE 187 203 913</p>
+    <h2>Geschäftsführer</h2>
+    <p>Eike-Christian Ramcke</p>
+    <h2>Inhaltlich Verantwortlicher</h2>
+    <p>Eike-Christian Ramcke (gem. § 18 Abs. 2 MStV)</p>
+  </div>
+</Layout>

@@ -1,0 +1,16 @@
+---
+import Layout from "@/components/Layout.astro";
+import { pageSEO } from "@/lib/seo";
+import { strings } from "@/lib/strings";
+export const prerender = true;
+const seo = pageSEO(strings.aboutTitle, "flinkbase kondensiert die wichtigsten AI-News von Hacker News — 3x täglich, auf Deutsch, meinungsstark.", "/ueber");
+---
+<Layout seo={seo}>
+  <h1 class="mb-6 text-2xl font-bold">{strings.aboutTitle}</h1>
+  <div class="prose prose-zinc max-w-none">
+    <p><strong>flinkbase</strong> ist ein deutschsprachiger AI News Digest. Dreimal am Tag filtern wir die relevantesten KI-Nachrichten von Hacker News, fassen sie auf Deutsch zusammen und ordnen sie ein.</p>
+    <p>Kein Noise, nur Signal. Meinungsstark, nicht neutral. Für Tech-Entscheider, Founder und Entwickler im DACH-Raum.</p>
+    <h2>Wie funktioniert das?</h2>
+    <p>Ein automatisiertes System analysiert dreimal täglich die Top-Stories auf Hacker News, filtert nach AI-Relevanz, fasst die wichtigsten Stories auf Deutsch zusammen und ordnet den Tag ein.</p>
+  </div>
+</Layout>
