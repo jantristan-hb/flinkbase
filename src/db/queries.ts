@@ -1,4 +1,4 @@
-import { db } from "./client";
+import { db, pgClient } from "./client";
 import { digests, stories, storyEmbeddings, subscribers } from "./schema";
 import type { NewDigest, NewStory } from "./schema";
 import { eq, desc, and, lt, gt, sql, asc } from "drizzle-orm";
@@ -97,7 +97,7 @@ export async function searchStoriesByEmbedding(
   limit: number = 20
 ) {
   const vectorStr = `[${queryEmbedding.join(",")}]`;
-  return db.execute(sql`
+  return pgClient`
     SELECT s.id, s.headline_de, s.summary, s.why_relevant, s.hn_url, s.source_url, s.tags,
       d.digest_date, d.slot, d.title as digest_title,
       se.embedding <=> ${vectorStr}::vector AS distance
@@ -106,7 +106,7 @@ export async function searchStoriesByEmbedding(
     JOIN digests d ON s.digest_id = d.id
     ORDER BY se.embedding <=> ${vectorStr}::vector
     LIMIT ${limit}
-  `);
+  `;
 }
 
 export async function insertDigestWithStories(
