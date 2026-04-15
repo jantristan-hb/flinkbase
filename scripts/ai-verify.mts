@@ -3,11 +3,17 @@ import {
   getUnverifiedStories,
   updateStoryVerification,
 } from "../src/db/queries";
+import { correctStory } from "./ai-summarize.mts";
+import { db } from "../src/db/client";
+import { stories } from "../src/db/schema";
+import { eq } from "drizzle-orm";
 import type { Story } from "../src/db/schema";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 
-async function fetchSourceContent(url: string): Promise<string | null> {
+const MAX_CORRECTION_ROUNDS = 2;
+
+export async function fetchSourceContent(url: string): Promise<string | null> {
   try {
     const res = await fetch(url, {
       headers: { "User-Agent": "flinkbase-verifier/1.0" },
@@ -27,11 +33,10 @@ async function fetchSourceContent(url: string): Promise<string | null> {
   }
 }
 
-async function verifyStory(story: Story): Promise<{ status: "verified" | "rejected"; reason: string }> {
-  const sourceContent = story.sourceUrl
-    ? await fetchSourceContent(story.sourceUrl)
-    : null;
-
+async function verifyStory(
+  story: Story,
+  sourceContent: string | null
+): Promise<{ status: "verified" | "rejected"; reason: string }> {
   const prompt = `Du bist ein Faktenprüfer für den AI News Digest "flinkbase.com". Prüfe ob die folgende deutsche Zusammenfassung korrekt ist.
 
 ORIGINAL:
@@ -55,7 +60,7 @@ Antworte als JSON:
   "reason": "Kurze Begründung (1-2 Sätze). Bei 'verified': was bestätigt wurde. Bei 'rejected': was falsch ist."
 }
 
-WICHTIG: Nur "rejected" wenn die Summary FAKTISCH FALSCH ist oder das Thema NICHT zur Quelle passt. Stilistische Unterschiede oder leichte Vereinfachungen sind OK.
+WICHTIG: Nur "rejected" wenn die Summary FAKTISCH FALSCH ist oder das Thema NICHT zur Quelle passt. Stilistische Unterschiede oder leichte Vereinfachungen sind OK. Wenn die Quelle nicht geladen werden konnte und Headline zum Originaltitel passt → "verified".
 
 NUR das JSON, kein anderer Text.`;
 
@@ -73,6 +78,20 @@ NUR das JSON, kein anderer Text.`;
   }
 }
 
+async function updateStoryContent(storyId: string, summary: { headline_de: string; summary: string; why_relevant: string; tags: string[] }) {
+  await db
+    .update(stories)
+    .set({
+      headlineDe: summary.headline_de,
+      summary: summary.summary,
+      whyRelevant: summary.why_relevant,
+      tags: summary.tags,
+      verificationStatus: "unverified",
+      verificationReason: null,
+    })
+    .where(eq(stories.id, storyId));
+}
+
 export async function runVerification(digestId: string): Promise<{ verified: number; rejected: number }> {
   const unverified = await getUnverifiedStories(digestId);
 
@@ -80,21 +99,84 @@ export async function runVerification(digestId: string): Promise<{ verified: num
     return { verified: 0, rejected: 0 };
   }
 
-  let verified = 0;
-  let rejected = 0;
+  let totalVerified = 0;
+  let totalRejected = 0;
 
   for (const story of unverified) {
-    const result = await verifyStory(story);
-    await updateStoryVerification(story.id, result.status, result.reason);
+    // Fetch source content once per story (reused across correction rounds)
+    const sourceContent = story.sourceUrl
+      ? await fetchSourceContent(story.sourceUrl)
+      : null;
 
-    if (result.status === "verified") {
-      verified++;
-      console.log(`    ✓ "${story.headlineDe}" — ${result.reason}`);
+    let currentStory = story;
+    let finalStatus: "verified" | "rejected" = "rejected";
+    let finalReason = "";
+
+    for (let round = 0; round <= MAX_CORRECTION_ROUNDS; round++) {
+      const label = round === 0 ? "Verify" : `Correction ${round}`;
+      console.log(`    [${label}] "${currentStory.headlineDe}"`);
+
+      const result = await verifyStory(currentStory, sourceContent);
+
+      if (result.status === "verified") {
+        finalStatus = "verified";
+        finalReason = result.reason;
+        console.log(`      ✓ Verified: ${result.reason}`);
+        break;
+      }
+
+      // Rejected
+      console.log(`      ✗ Rejected: ${result.reason}`);
+
+      if (round >= MAX_CORRECTION_ROUNDS) {
+        // Max rounds exceeded — stay rejected
+        finalStatus = "rejected";
+        finalReason = `Nach ${MAX_CORRECTION_ROUNDS} Korrekturrunden weiterhin fehlerhaft: ${result.reason}`;
+        console.log(`      ⚠ Max correction rounds reached — dropping story.`);
+        break;
+      }
+
+      // Correct with Gemini
+      console.log(`      → Correcting with Gemini...`);
+      const corrected = await correctStory(
+        {
+          title: currentStory.headlineEn,
+          url: currentStory.sourceUrl,
+          score: 0,
+          descendants: 0,
+        },
+        {
+          headline_de: currentStory.headlineDe,
+          summary: currentStory.summary,
+          why_relevant: currentStory.whyRelevant,
+          tags: currentStory.tags,
+        },
+        result.reason,
+        sourceContent
+      );
+
+      // Update story in DB with corrected content
+      await updateStoryContent(currentStory.id, corrected);
+      console.log(`      → Corrected headline: "${corrected.headline_de}"`);
+
+      // Reload story for next verification round
+      currentStory = {
+        ...currentStory,
+        headlineDe: corrected.headline_de,
+        summary: corrected.summary,
+        whyRelevant: corrected.why_relevant,
+        tags: corrected.tags,
+      };
+    }
+
+    await updateStoryVerification(currentStory.id, finalStatus, finalReason);
+
+    if (finalStatus === "verified") {
+      totalVerified++;
     } else {
-      rejected++;
-      console.log(`    ✗ REJECTED: "${story.headlineDe}" — ${result.reason}`);
+      totalRejected++;
     }
   }
 
-  return { verified, rejected };
+  return { verified: totalVerified, rejected: totalRejected };
 }

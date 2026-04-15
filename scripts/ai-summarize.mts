@@ -36,6 +36,48 @@ NUR das JSON-Objekt, kein anderer Text.`;
   return JSON.parse(text.replace(/\`\`\`json\n?/g, "").replace(/\`\`\`\n?/g, ""));
 }
 
+export async function correctStory(
+  story: { title: string; url: string | null; score: number; descendants: number },
+  previousSummary: StorySummary,
+  rejectionReason: string,
+  sourceContent: string | null
+): Promise<StorySummary> {
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+  const prompt = `Du schreibst für flinkbase.com — einen deutschen AI News Digest. Dein Stil ist meinungsstark, zugänglich und auf den Punkt.
+
+Deine vorherige Zusammenfassung wurde von einem Faktenprüfer ABGELEHNT:
+
+ORIGINAL-STORY:
+- Titel: ${story.title}
+- URL: ${story.url ?? "keine URL"}
+- HN-Score: ${story.score}
+${sourceContent ? `- Inhalt der Quelle (Auszug): "${sourceContent.slice(0, 2000)}"` : ""}
+
+DEINE VORHERIGE ZUSAMMENFASSUNG (ABGELEHNT):
+- Headline: "${previousSummary.headline_de}"
+- Summary: "${previousSummary.summary}"
+- Why relevant: "${previousSummary.why_relevant}"
+
+ABLEHNUNGSGRUND:
+"${rejectionReason}"
+
+KORRIGIERE die Zusammenfassung. Halte dich STRIKT an die Originalquelle. Erfinde KEINE Fakten. Wenn die Quelle nicht genug Informationen hergibt, bleib bei dem was du sicher weißt (Titel + URL).
+
+Antworte als JSON-Objekt:
+{
+  "headline_de": "Korrigierte deutsche Headline, max 80 Zeichen",
+  "summary": "2-3 Sätze auf Deutsch. NUR Fakten aus der Quelle. Meinungsstark aber korrekt.",
+  "why_relevant": "Ein Satz: Warum muss ein Tech-Entscheider das wissen?",
+  "tags": ["1-3 Schlagwörter, lowercase, englisch"]
+}
+
+NUR das JSON-Objekt, kein anderer Text.`;
+
+  const result = await model.generateContent(prompt);
+  const text = result.response.text();
+  return JSON.parse(text.replace(/```json\n?/g, "").replace(/```\n?/g, ""));
+}
+
 export async function summarizeDaySummary(summaries: StorySummary[]): Promise<string> {
   const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
   const headlines = summaries.map((s) => `- ${s.headline_de}`).join("\n");

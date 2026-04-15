@@ -64,19 +64,13 @@ async function main() {
   const daySummary = await summarizeDaySummary(summaries.map((s) => s.summary));
   console.log(`  → "${daySummary.slice(0, 80)}..."`);
 
-  // 6. Generate embeddings
-  console.log("[5/6] Generating embeddings...");
-  const embeddingTexts = summaries.map((s) => `${s.summary.headline_de} ${s.summary.summary}`);
-  const embeddings = await generateEmbeddings(embeddingTexts);
-  console.log(`  → ${embeddings.length} embeddings generated`);
-
-  // 7. Build title + description
+  // 6. Build title + description
   const titleHeadlines = summaries.slice(0, 2).map((s) => s.summary.headline_de).join(", ");
   const title = `${titleHeadlines} — AI Digest ${new Date().toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })}`;
   const description = summaries.slice(0, 3).map((s) => s.summary.headline_de).join(". ").slice(0, 152) + "...";
 
-  // 8. Persist
-  console.log("[6/6] Persisting to database...");
+  // 7. Persist (without embeddings — those come after verification)
+  console.log("[5/8] Persisting to database...");
   const publishedAt = new Date(now);
   publishedAt.setHours(SLOT_HOURS[slot], 0, 0, 0);
 
@@ -91,23 +85,41 @@ async function main() {
       sourceUrl: s.story.url,
       tags: s.summary.tags,
     })),
-    embeddings.map((emb, i) => ({ embedding: emb, contentText: embeddingTexts[i] }))
+    [] // No embeddings yet — generated after verification
   );
 
   console.log(`\n✓ Digest "${result.digest.title}" created with ${result.stories.length} stories.`);
   console.log(`  ID: ${result.digest.id}`);
   console.log(`  URL: /digest/${dateStr}-${slot}`);
 
-  // 9. Cross-model verification (Claude Sonnet)
-  console.log(`\n[7/8] Cross-model verification (Claude Sonnet)...`);
+  // 8. Cross-model verification + correction (Claude Sonnet ↔ Gemini Flash)
+  console.log(`\n[6/8] Cross-model verification (Claude Sonnet)...`);
   const { verified, rejected } = await runVerification(result.digest.id);
   console.log(`  → ${verified} verified, ${rejected} rejected`);
+
+  // 9. Generate embeddings for verified stories (after correction)
+  const verifiedStories = await getStoriesForDigest(result.digest.id);
+  console.log(`\n[7/8] Generating embeddings for ${verifiedStories.length} verified stories...`);
+  if (verifiedStories.length > 0) {
+    const embeddingTexts = verifiedStories.map((s) => `${s.headlineDe} ${s.summary}`);
+    const embeddings = await generateEmbeddings(embeddingTexts);
+    // Insert embeddings for verified stories
+    const { storyEmbeddings } = await import("../src/db/schema");
+    const { db: database } = await import("../src/db/client");
+    await database.insert(storyEmbeddings).values(
+      verifiedStories.map((s, i) => ({
+        storyId: s.id,
+        embedding: embeddings[i],
+        contentText: embeddingTexts[i],
+      }))
+    );
+    console.log(`  → ${embeddings.length} embeddings generated`);
+  }
 
   // 10. Send newsletter only for abend digest (only verified stories)
   if (slot === "abend") {
     const subs = await getConfirmedSubscribers();
     if (subs.length > 0) {
-      const verifiedStories = await getStoriesForDigest(result.digest.id);
       console.log(`\n[8/8] Sending newsletter to ${subs.length} subscribers (${verifiedStories.length} verified stories)...`);
       const { sent, failed } = await sendDigestToAll(subs, result.digest, verifiedStories);
       console.log(`  → ${sent} sent, ${failed} failed`);
