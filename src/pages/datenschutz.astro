@@ -8,51 +8,244 @@ const seo = pageSEO(strings.privacyTitle, "Datenschutzerklärung — flinkbase.c
 <Layout seo={seo}>
   <h1 class="mb-6 text-2xl font-bold">{strings.privacyTitle}</h1>
   <div class="prose prose-zinc max-w-none">
+    <p class="text-sm text-zinc-500"><em>Stand: April 2026</em></p>
+
+    <!-- Kurzfassung -->
+    <div class="rounded-lg border border-zinc-200 bg-zinc-50 p-4 not-prose mb-8">
+      <p class="font-semibold text-zinc-900 mb-2">Kurzfassung</p>
+      <ul class="text-sm text-zinc-700 space-y-1 list-disc list-inside">
+        <li>Wir speichern Ihre E-Mail-Adresse nur bei Newsletter-Anmeldung (Double Opt-In)</li>
+        <li>Die Suchfunktion sendet Ihren Suchbegriff an Google Gemini (nicht gespeichert)</li>
+        <li>Werbung läuft über Google AdSense (setzt Cookies)</li>
+        <li>Hosting in Deutschland (Hetzner, Nürnberg)</li>
+        <li>Kein Tracking, keine Analyse-Tools, keine Social-Media-Plugins</li>
+      </ul>
+    </div>
+
     <h2>1. Verantwortlicher</h2>
-    <p>Jan-Tristan Rudat, Eggerstedter Weg 18, 25421 Pinneberg.<br />E-Mail: jr@dangerously.ai</p>
+    <p>
+      Jan-Tristan Rudat<br />
+      Eggerstedter Weg 18<br />
+      25421 Pinneberg<br />
+      E-Mail: <a href="mailto:jr@dangerously.ai">jr@dangerously.ai</a>
+    </p>
 
-    <h2>2. Erhobene Daten</h2>
-    <h3>Newsletter-Anmeldung</h3>
-    <p>Bei der Anmeldung zum Newsletter speichern wir Ihre E-Mail-Adresse zum Zweck des Newsletter-Versands. Die Anmeldung erfolgt über ein Double-Opt-In-Verfahren: Nach Eingabe Ihrer E-Mail-Adresse erhalten Sie eine Bestätigungsmail. Erst nach Klick auf den Bestätigungslink wird Ihr Abonnement aktiviert.</p>
-    <p>Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO (Einwilligung).</p>
-    <p>Für den E-Mail-Versand nutzen wir den Dienst <strong>Resend</strong> (Resend, Inc., USA). Resend verarbeitet Ihre E-Mail-Adresse in unserem Auftrag zum Zweck der Zustellung. Weitere Informationen: <a href="https://resend.com/legal/privacy-policy">Resend Datenschutzerklärung</a>.</p>
+    <h2>2. Übersicht der Datenverarbeitungen</h2>
+    <p>Nachfolgend informieren wir Sie über die Verarbeitung Ihrer personenbezogenen Daten bei Nutzung von flinkbase.com.</p>
 
-    <h3>Server-Logfiles</h3>
-    <p>Unser Hosting-Provider erhebt automatisch Zugriffsdaten (IP-Adresse, Zeitstempel, angeforderte URL, Referrer, User-Agent). Diese Daten sind technisch erforderlich und werden nicht mit anderen Daten zusammengeführt.</p>
-    <p>Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse am sicheren Betrieb).</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Verarbeitung</th>
+          <th>Daten</th>
+          <th>Rechtsgrundlage</th>
+          <th>Speicherdauer</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Newsletter</td>
+          <td>E-Mail-Adresse</td>
+          <td>Art. 6 Abs. 1 lit. a DSGVO</td>
+          <td>Bis Abmeldung</td>
+        </tr>
+        <tr>
+          <td>Server-Logfiles</td>
+          <td>IP, Zeitstempel, URL</td>
+          <td>Art. 6 Abs. 1 lit. f DSGVO</td>
+          <td>14 Tage</td>
+        </tr>
+        <tr>
+          <td>Semantische Suche</td>
+          <td>Suchbegriff</td>
+          <td>Art. 6 Abs. 1 lit. f DSGVO</td>
+          <td>Nicht gespeichert</td>
+        </tr>
+        <tr>
+          <td>Google AdSense</td>
+          <td>Cookies, Nutzungsdaten</td>
+          <td>Art. 6 Abs. 1 lit. a DSGVO</td>
+          <td>Siehe Google</td>
+        </tr>
+      </tbody>
+    </table>
 
-    <h3>Semantische Suche</h3>
-    <p>Bei Nutzung der Suchfunktion wird Ihr Suchbegriff an die Google Gemini API übermittelt, um eine Vektoreinbettung für die semantische Suche zu erzeugen. Der Suchbegriff wird nicht dauerhaft gespeichert.</p>
-    <p>Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Bereitstellung der Suchfunktion).</p>
+    <hr />
 
-    <h2>3. Google AdSense</h2>
-    <p>Diese Website nutzt Google AdSense, einen Anzeigendienst der Google Ireland Limited ("Google"). Google AdSense verwendet Cookies und ähnliche Technologien, um relevante Anzeigen zu schalten und die Anzeigenleistung zu messen. Dabei können Daten an Server von Google in den USA übermittelt werden.</p>
-    <p>Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO (Einwilligung).</p>
-    <p>Weitere Informationen: <a href="https://policies.google.com/privacy">Google Datenschutzerklärung</a>.</p>
+    <h2>3. Newsletter</h2>
+    <h3>3.1 Anmeldung und Double Opt-In</h3>
+    <p>Bei der Anmeldung zum Newsletter speichern wir Ihre E-Mail-Adresse zum Zweck des Newsletter-Versands. Die Anmeldung erfolgt über ein Double-Opt-In-Verfahren:</p>
+    <ol>
+      <li>Sie geben Ihre E-Mail-Adresse in das Anmeldeformular ein.</li>
+      <li>Sie erhalten eine Bestätigungsmail an die angegebene Adresse.</li>
+      <li>Erst nach Klick auf den Bestätigungslink wird Ihr Abonnement aktiviert.</li>
+    </ol>
+    <p>Ohne Bestätigung werden keine Newsletter zugestellt. Die unbestätigte E-Mail-Adresse wird nach 30 Tagen automatisch gelöscht.</p>
+    <p><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. a DSGVO (Einwilligung).</p>
 
-    <h2>4. KI-generierte Inhalte</h2>
-    <p>Die Zusammenfassungen und Einordnungen auf dieser Website werden mit Hilfe von Google Gemini (Google Ireland Limited) erstellt. Die zugrundeliegenden Daten stammen von öffentlich zugänglichen Quellen (Hacker News API). Es werden keine personenbezogenen Daten der Nutzer an die KI-Dienste übermittelt (außer bei Nutzung der Suchfunktion, siehe oben).</p>
+    <h3>3.2 Inhalt und Frequenz</h3>
+    <p>Der Newsletter enthält den täglichen Abend-Digest — eine Zusammenfassung der wichtigsten KI-Nachrichten des Tages. Der Versand erfolgt einmal täglich (ca. 18:00 Uhr).</p>
 
-    <h2>5. Hosting</h2>
-    <p>Diese Website wird auf einem Server der Hetzner Online GmbH (Industriestr. 25, 91710 Gunzenhausen) in Deutschland gehostet. Auftragsverarbeitung gemäß Art. 28 DSGVO.</p>
+    <h3>3.3 E-Mail-Versanddienstleister</h3>
+    <p>Für den Versand nutzen wir den Dienst <strong>Resend</strong> (Resend, Inc., 2261 Market Street #4059, San Francisco, CA 94114, USA). Resend verarbeitet Ihre E-Mail-Adresse in unserem Auftrag ausschließlich zum Zweck der Zustellung.</p>
+    <p>Da Resend seinen Sitz in den USA hat, erfolgt eine Übermittlung personenbezogener Daten in ein Drittland. Die Übermittlung erfolgt auf Grundlage von Standardvertragsklauseln (Art. 46 Abs. 2 lit. c DSGVO).</p>
+    <p>Weitere Informationen: <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer">Resend Datenschutzerklärung</a>.</p>
 
-    <h2>6. Ihre Rechte</h2>
-    <p>Sie haben das Recht auf:</p>
+    <h3>3.4 Abmeldung</h3>
+    <p>Sie können sich jederzeit vom Newsletter abmelden:</p>
     <ul>
-      <li>Auskunft über Ihre gespeicherten Daten (Art. 15 DSGVO)</li>
-      <li>Berichtigung unrichtiger Daten (Art. 16 DSGVO)</li>
-      <li>Löschung Ihrer Daten (Art. 17 DSGVO)</li>
-      <li>Einschränkung der Verarbeitung (Art. 18 DSGVO)</li>
-      <li>Widerspruch gegen die Verarbeitung (Art. 21 DSGVO)</li>
-      <li>Datenübertragbarkeit (Art. 20 DSGVO)</li>
+      <li>Über den Abmelde-Link am Ende jeder Newsletter-E-Mail</li>
+      <li>Per E-Mail an <a href="mailto:jr@dangerously.ai">jr@dangerously.ai</a></li>
     </ul>
-    <p>Zur Ausübung Ihrer Rechte kontaktieren Sie: jr@dangerously.ai</p>
-    <p>Sie haben zudem das Recht, sich bei einer Datenschutzaufsichtsbehörde zu beschweren.</p>
+    <p>Nach Abmeldung wird Ihre E-Mail-Adresse als abgemeldet markiert und es werden keine weiteren E-Mails zugestellt.</p>
 
-    <h2>7. Newsletter-Abmeldung</h2>
-    <p>Sie können sich jederzeit vom Newsletter abmelden — über den Abmelde-Link in jeder E-Mail oder per E-Mail an jr@dangerously.ai.</p>
+    <hr />
 
-    <h2>8. Änderungen</h2>
-    <p>Diese Datenschutzerklärung ist aktuell gültig (Stand: April 2026). Wir behalten uns vor, sie bei Bedarf anzupassen.</p>
+    <h2>4. Server-Logfiles</h2>
+    <p>Bei jedem Zugriff auf flinkbase.com erhebt unser Hosting-Provider automatisch folgende Daten:</p>
+    <ul>
+      <li>IP-Adresse des anfragenden Rechners</li>
+      <li>Datum und Uhrzeit des Zugriffs</li>
+      <li>Angeforderte URL</li>
+      <li>HTTP-Statuscode</li>
+      <li>Übertragene Datenmenge</li>
+      <li>Referrer-URL (zuvor besuchte Seite)</li>
+      <li>User-Agent (Browser und Betriebssystem)</li>
+    </ul>
+    <p>Diese Daten sind technisch erforderlich für die Auslieferung der Website und werden nicht mit anderen Datenquellen zusammengeführt. Die Logfiles werden nach 14 Tagen automatisch gelöscht.</p>
+    <p><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse am sicheren und stabilen Betrieb der Website).</p>
+
+    <hr />
+
+    <h2>5. Semantische Suche</h2>
+    <p>flinkbase bietet eine semantische Suchfunktion über vergangene Digests. Bei Nutzung der Suche wird Ihr Suchbegriff an die <strong>Google Gemini Embedding API</strong> (Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland) übermittelt, um eine Vektoreinbettung (Embedding) zu erzeugen. Dieses Embedding wird mit den gespeicherten Digest-Embeddings verglichen, um relevante Ergebnisse zu finden.</p>
+    <p>Der Suchbegriff wird weder von uns noch von Google dauerhaft gespeichert. Es findet keine Profilbildung statt.</p>
+    <p><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Bereitstellung der Suchfunktion).</p>
+
+    <hr />
+
+    <h2>6. Google AdSense</h2>
+    <p>Diese Website nutzt <strong>Google AdSense</strong>, einen Anzeigendienst der Google Ireland Limited ("Google"). Google AdSense verwendet Cookies und ähnliche Technologien, um Ihnen auf Ihre Interessen abgestimmte Werbeanzeigen zu präsentieren und die Wirksamkeit von Anzeigen zu messen.</p>
+    <p>Dabei können folgende Daten erhoben und verarbeitet werden:</p>
+    <ul>
+      <li>Cookie-Kennungen</li>
+      <li>Geräte- und Browser-Informationen</li>
+      <li>IP-Adresse (ggf. gekürzt)</li>
+      <li>Nutzungsdaten (Seitenaufrufe, Interaktionen mit Anzeigen)</li>
+    </ul>
+    <p>Diese Daten können an Server von Google in den USA übermittelt werden. Google ist unter dem EU-US Data Privacy Framework zertifiziert.</p>
+    <p><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. a DSGVO (Einwilligung).</p>
+    <p>Sie können die Verwendung von Cookies durch Google in den <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">Google Anzeigeneinstellungen</a> verwalten. Weitere Informationen: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Datenschutzerklärung</a>.</p>
+
+    <hr />
+
+    <h2>7. Cookies</h2>
+    <p>flinkbase.com selbst setzt keine eigenen Cookies. Cookies werden ausschließlich durch den integrierten Dienst Google AdSense gesetzt (siehe Abschnitt 6).</p>
+    <p>Sie können Cookies in Ihren Browsereinstellungen jederzeit löschen oder deren Speicherung generell ablehnen. Bitte beachten Sie, dass die Deaktivierung von Cookies die Funktionalität der Werbeanzeigen einschränken kann.</p>
+
+    <hr />
+
+    <h2>8. KI-generierte Inhalte</h2>
+    <p>Die Zusammenfassungen, Einordnungen und Schlagzeilen auf flinkbase.com werden mit Hilfe von <strong>Google Gemini</strong> (Google Ireland Limited) erstellt. Die zugrundeliegenden Daten stammen ausschließlich von öffentlich zugänglichen Quellen (Hacker News API).</p>
+    <p>Bei der Erstellung der Inhalte werden <strong>keine personenbezogenen Daten der Nutzer</strong> an Google Gemini übermittelt. Die Verarbeitung betrifft ausschließlich öffentlich zugängliche Nachrichtentexte und URLs.</p>
+
+    <hr />
+
+    <h2>9. Hosting und SSL-Verschlüsselung</h2>
+    <p>Diese Website wird auf einem Server der <strong>Hetzner Online GmbH</strong> (Industriestr. 25, 91710 Gunzenhausen, Deutschland) in einem Rechenzentrum in Nürnberg gehostet.</p>
+    <p>Die Datenverarbeitung erfolgt auf Grundlage eines Auftragsverarbeitungsvertrages gemäß Art. 28 DSGVO. Alle Daten verbleiben in Deutschland.</p>
+    <p>Die Verbindung zu flinkbase.com ist per TLS (Transport Layer Security) verschlüsselt. Sie erkennen dies an dem Schloss-Symbol in der Adressleiste Ihres Browsers und dem Protokoll "https://".</p>
+
+    <hr />
+
+    <h2>10. Übermittlung in Drittländer</h2>
+    <p>Eine Übermittlung personenbezogener Daten in Länder außerhalb der EU/des EWR erfolgt nur in folgenden Fällen:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Dienst</th>
+          <th>Anbieter</th>
+          <th>Land</th>
+          <th>Garantie</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Newsletter-Versand</td>
+          <td>Resend, Inc.</td>
+          <td>USA</td>
+          <td>Standardvertragsklauseln</td>
+        </tr>
+        <tr>
+          <td>Werbeanzeigen</td>
+          <td>Google Ireland Ltd.</td>
+          <td>USA (ggf.)</td>
+          <td>EU-US Data Privacy Framework</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr />
+
+    <h2>11. Speicherdauer</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Daten</th>
+          <th>Speicherdauer</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Newsletter E-Mail (bestätigt)</td>
+          <td>Bis zur Abmeldung</td>
+        </tr>
+        <tr>
+          <td>Newsletter E-Mail (unbestätigt)</td>
+          <td>30 Tage</td>
+        </tr>
+        <tr>
+          <td>Server-Logfiles</td>
+          <td>14 Tage</td>
+        </tr>
+        <tr>
+          <td>Suchbegriffe</td>
+          <td>Keine Speicherung</td>
+        </tr>
+        <tr>
+          <td>AdSense-Cookies</td>
+          <td>Siehe Google-Richtlinien</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr />
+
+    <h2>12. Ihre Rechte</h2>
+    <p>Sie haben gemäß DSGVO folgende Rechte bezüglich Ihrer personenbezogenen Daten:</p>
+    <ul>
+      <li><strong>Auskunft</strong> (Art. 15 DSGVO) — Sie können Auskunft darüber verlangen, ob und welche personenbezogenen Daten wir über Sie gespeichert haben.</li>
+      <li><strong>Berichtigung</strong> (Art. 16 DSGVO) — Sie können die Berichtigung unrichtiger Daten verlangen.</li>
+      <li><strong>Löschung</strong> (Art. 17 DSGVO) — Sie können die Löschung Ihrer Daten verlangen, sofern keine gesetzliche Aufbewahrungspflicht entgegensteht.</li>
+      <li><strong>Einschränkung</strong> (Art. 18 DSGVO) — Sie können die Einschränkung der Verarbeitung Ihrer Daten verlangen.</li>
+      <li><strong>Datenübertragbarkeit</strong> (Art. 20 DSGVO) — Sie können verlangen, dass wir Ihnen Ihre Daten in einem strukturierten, maschinenlesbaren Format übermitteln.</li>
+      <li><strong>Widerspruch</strong> (Art. 21 DSGVO) — Sie können der Verarbeitung Ihrer Daten widersprechen, soweit diese auf einem berechtigten Interesse basiert.</li>
+      <li><strong>Widerruf der Einwilligung</strong> (Art. 7 Abs. 3 DSGVO) — Erteilte Einwilligungen (z.B. Newsletter) können Sie jederzeit mit Wirkung für die Zukunft widerrufen.</li>
+    </ul>
+    <p>Zur Ausübung Ihrer Rechte wenden Sie sich an: <a href="mailto:jr@dangerously.ai">jr@dangerously.ai</a></p>
+
+    <h2>13. Beschwerderecht bei der Aufsichtsbehörde</h2>
+    <p>Sie haben das Recht, sich bei einer Datenschutzaufsichtsbehörde zu beschweren. Die für uns zuständige Aufsichtsbehörde ist:</p>
+    <p>
+      Unabhängiges Landeszentrum für Datenschutz Schleswig-Holstein (ULD)<br />
+      Holstenstraße 98<br />
+      24103 Kiel<br />
+      <a href="https://www.datenschutzzentrum.de" target="_blank" rel="noopener noreferrer">www.datenschutzzentrum.de</a>
+    </p>
+
+    <hr />
+
+    <h2>14. Änderungen dieser Datenschutzerklärung</h2>
+    <p>Wir behalten uns vor, diese Datenschutzerklärung bei Bedarf anzupassen, um sie an geänderte Rechtslagen oder bei Änderungen des Dienstes anzupassen. Die aktuelle Version ist stets unter <a href="/datenschutz">flinkbase.com/datenschutz</a> abrufbar.</p>
   </div>
 </Layout>
