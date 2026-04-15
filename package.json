@@ -17,6 +17,7 @@
     "seed": "tsx scripts/seed.mts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.89.0",
     "@astrojs/node": "^10.0.5",
     "@astrojs/sitemap": "^3.7.2",
     "@google/generative-ai": "^0.24.1",

@@ -25,7 +25,12 @@ export async function getStoriesForDigest(digestId: string) {
   return db
     .select()
     .from(stories)
-    .where(eq(stories.digestId, digestId))
+    .where(
+      and(
+        eq(stories.digestId, digestId),
+        sql`${stories.verificationStatus} != 'rejected'`
+      )
+    )
     .orderBy(asc(stories.position));
 }
 
@@ -159,6 +164,38 @@ export async function unsubscribe(id: string) {
     .set({ unsubscribedAt: new Date() })
     .where(eq(subscribers.id, id))
     .returning();
+}
+
+export async function getUnverifiedStories(digestId: string) {
+  return db
+    .select()
+    .from(stories)
+    .where(and(eq(stories.digestId, digestId), eq(stories.verificationStatus, "unverified")))
+    .orderBy(asc(stories.position));
+}
+
+export async function updateStoryVerification(
+  storyId: string,
+  status: "verified" | "rejected",
+  reason: string
+) {
+  return db
+    .update(stories)
+    .set({ verificationStatus: status, verificationReason: reason })
+    .where(eq(stories.id, storyId))
+    .returning();
+}
+
+export async function getLatestUnverifiedDigest() {
+  const result = await db
+    .select()
+    .from(digests)
+    .where(
+      sql`EXISTS (SELECT 1 FROM stories WHERE stories.digest_id = digests.id AND stories.verification_status = 'unverified')`
+    )
+    .orderBy(desc(digests.publishedAt))
+    .limit(1);
+  return result[0] ?? null;
 }
 
 export async function getConfirmedSubscribers() {

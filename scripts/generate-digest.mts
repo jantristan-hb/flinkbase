@@ -3,8 +3,9 @@ import { fetchTopStories } from "./hn-client.mts";
 import { filterForAIRelevance } from "./ai-filter.mts";
 import { summarizeStory, summarizeDaySummary } from "./ai-summarize.mts";
 import { generateEmbeddings } from "./ai-embed.mts";
-import { insertDigestWithStories, getConfirmedSubscribers } from "../src/db/queries";
+import { insertDigestWithStories, getConfirmedSubscribers, getStoriesForDigest } from "../src/db/queries";
 import { sendDigestToAll } from "../src/lib/mail";
+import { runVerification } from "./ai-verify.mts";
 
 type Slot = "morgen" | "mittag" | "abend";
 
@@ -97,18 +98,24 @@ async function main() {
   console.log(`  ID: ${result.digest.id}`);
   console.log(`  URL: /digest/${dateStr}-${slot}`);
 
-  // 9. Send newsletter only for abend digest
+  // 9. Cross-model verification (Claude Sonnet)
+  console.log(`\n[7/8] Cross-model verification (Claude Sonnet)...`);
+  const { verified, rejected } = await runVerification(result.digest.id);
+  console.log(`  → ${verified} verified, ${rejected} rejected`);
+
+  // 10. Send newsletter only for abend digest (only verified stories)
   if (slot === "abend") {
     const subs = await getConfirmedSubscribers();
     if (subs.length > 0) {
-      console.log(`\n[7/7] Sending newsletter to ${subs.length} subscribers...`);
-      const { sent, failed } = await sendDigestToAll(subs, result.digest, result.stories);
+      const verifiedStories = await getStoriesForDigest(result.digest.id);
+      console.log(`\n[8/8] Sending newsletter to ${subs.length} subscribers (${verifiedStories.length} verified stories)...`);
+      const { sent, failed } = await sendDigestToAll(subs, result.digest, verifiedStories);
       console.log(`  → ${sent} sent, ${failed} failed`);
     } else {
-      console.log("\n[7/7] No confirmed subscribers — skipping newsletter.");
+      console.log("\n[8/8] No confirmed subscribers — skipping newsletter.");
     }
   } else {
-    console.log("\n[7/7] Newsletter only sent with abend digest — skipping.");
+    console.log("\n[8/8] Newsletter only sent with abend digest — skipping.");
   }
 }
 

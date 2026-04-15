@@ -61,6 +61,8 @@ export const stories = pgTable(
     hnUrl: text("hn_url").notNull(),
     sourceUrl: text("source_url"),
     tags: text("tags").array().notNull().default([]),
+    verificationStatus: text("verification_status").notNull().default("unverified"), // 'unverified' | 'verified' | 'rejected'
+    verificationReason: text("verification_reason"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
