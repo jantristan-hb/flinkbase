@@ -1,0 +1,68 @@
+---
+import type { SEOProps } from "@/lib/seo";
+import { strings } from "@/lib/strings";
+import { webSiteJsonLd } from "@/lib/seo";
+import "@/styles/global.css";
+
+interface Props {
+  seo: SEOProps;
+  jsonLd?: Record<string, unknown>;
+}
+
+const { seo, jsonLd } = Astro.props;
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{seo.title}</title>
+    <meta name="description" content={seo.description} />
+    <link rel="canonical" href={seo.canonical} />
+    <meta property="og:title" content={seo.title} />
+    <meta property="og:description" content={seo.description} />
+    <meta property="og:type" content={seo.ogType ?? "website"} />
+    <meta property="og:url" content={seo.canonical} />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:site_name" content={strings.siteName} />
+    {seo.ogImage && <meta property="og:image" content={seo.ogImage} />}
+    {seo.publishedAt && <meta property="article:published_time" content={seo.publishedAt} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={seo.title} />
+    <meta name="twitter:description" content={seo.description} />
+    {seo.ogImage && <meta name="twitter:image" content={seo.ogImage} />}
+    <link rel="alternate" hreflang="de" href={seo.canonical} />
+    <link rel="alternate" type="application/rss+xml" title={`${strings.siteName} RSS`} href="https://flinkbase.com/rss.xml" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    {seo.noindex && <meta name="robots" content="noindex" />}
+    <script type="application/ld+json" set:html={JSON.stringify(webSiteJsonLd())} />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    <script is:inline async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9761084595774987" crossorigin="anonymous"></script>
+  </head>
+  <body class="min-h-screen bg-white text-zinc-900 antialiased">
+    <header class="border-b border-zinc-200">
+      <nav class="mx-auto flex max-w-3xl items-center justify-between px-4 py-4">
+        <a href="/" class="text-xl font-bold tracking-tight">{strings.siteName}</a>
+        <div class="flex gap-4 text-sm text-zinc-600">
+          <a href="/archiv" class="hover:text-zinc-900">{strings.archivTitle}</a>
+          <a href="/suche" class="hover:text-zinc-900">{strings.searchTitle}</a>
+          <a href="/ueber" class="hover:text-zinc-900">Über</a>
+        </div>
+      </nav>
+    </header>
+    <main class="mx-auto max-w-3xl px-4 py-8">
+      <slot />
+    </main>
+    <footer class="border-t border-zinc-200 py-8 text-center text-sm text-zinc-500">
+      <div class="mx-auto max-w-3xl px-4">
+        <p>{strings.footer}</p>
+        <div class="mt-2 flex justify-center gap-4">
+          <a href="/impressum" class="hover:text-zinc-700">{strings.imprintTitle}</a>
+          <a href="/datenschutz" class="hover:text-zinc-700">{strings.privacyTitle}</a>
+          <a href="/rss.xml" class="hover:text-zinc-700">RSS</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
