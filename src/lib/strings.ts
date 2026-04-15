@@ -22,5 +22,6 @@ export const strings = {
   paywallTitle: "Archiv nur für Abonnenten",
   paywallText: "Dieser Digest ist älter als 7 Tage. Das vollständige Archiv ist bald als Abo verfügbar.",
   slotLabels: { morgen: "Morgen", mittag: "Mittag", abend: "Abend" } as Record<string, string>,
+  termsTitle: "Nutzungsbedingungen",
   footer: "© flinkbase. AI News Digest.",
 } as const;

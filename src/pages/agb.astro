@@ -1,0 +1,56 @@
+---
+import Layout from "@/components/Layout.astro";
+import { pageSEO } from "@/lib/seo";
+import { strings } from "@/lib/strings";
+export const prerender = true;
+const seo = pageSEO(strings.termsTitle, "Nutzungsbedingungen — flinkbase.com", "/agb");
+---
+<Layout seo={seo}>
+  <h1 class="mb-6 text-2xl font-bold">{strings.termsTitle}</h1>
+  <div class="prose prose-zinc max-w-none">
+    <p><em>Stand: April 2026</em></p>
+
+    <h2>1. Geltungsbereich</h2>
+    <p>Diese Nutzungsbedingungen gelten für die Nutzung der Website flinkbase.com ("Dienst"), betrieben von Jan-Tristan Rudat, Eggerstedter Weg 18, 25421 Pinneberg.</p>
+
+    <h2>2. Leistungsbeschreibung</h2>
+    <p>flinkbase ist ein KI-gestützter Nachrichtendienst, der öffentlich zugängliche Inhalte von Hacker News automatisiert filtert, zusammenfasst und auf Deutsch einordnet. Die Zusammenfassungen werden mit Hilfe von künstlicher Intelligenz (Google Gemini) erstellt.</p>
+    <p>Der Dienst umfasst:</p>
+    <ul>
+      <li>Drei tägliche AI News Digests (morgens, mittags, abends) auf der Website</li>
+      <li>Einen optionalen E-Mail-Newsletter (Abend-Digest)</li>
+      <li>Eine semantische Suche über vergangene Digests</li>
+      <li>Ein Archiv der letzten 7 Tage (kostenlos)</li>
+    </ul>
+
+    <h2>3. KI-generierte Inhalte</h2>
+    <p>Die Inhalte werden automatisiert durch KI erstellt. Trotz sorgfältiger Konfiguration der KI-Systeme können wir keine Gewähr für die Richtigkeit, Vollständigkeit oder Aktualität der Zusammenfassungen übernehmen. Die Zusammenfassungen ersetzen nicht das Lesen der Originalquellen. Die Originalquellen sind in jedem Digest verlinkt.</p>
+    <p>Die Meinungen und Einordnungen in den Zusammenfassungen werden durch KI generiert und spiegeln nicht notwendigerweise die Meinung des Betreibers wider.</p>
+
+    <h2>4. Newsletter</h2>
+    <p>Die Anmeldung zum Newsletter erfolgt über ein Double-Opt-In-Verfahren. Sie können sich jederzeit abmelden — über den Abmelde-Link in jeder E-Mail oder per E-Mail an jr@dangerously.ai. Nach Abmeldung werden keine weiteren Newsletter zugestellt. Die E-Mail-Adresse wird gemäß der Datenschutzerklärung behandelt.</p>
+
+    <h2>5. Kostenlose und kostenpflichtige Inhalte</h2>
+    <p>Der Dienst ist derzeit kostenlos nutzbar. Digests der letzten 7 Tage sind frei zugänglich. Wir behalten uns vor, in Zukunft kostenpflichtige Funktionen einzuführen (z.B. erweitertes Archiv, personalisierte Filter). Bereits kostenlos zugängliche Inhalte bleiben kostenlos.</p>
+
+    <h2>6. Geistiges Eigentum</h2>
+    <p>Die auf flinkbase.com veröffentlichten Zusammenfassungen stellen eigenständige redaktionelle Leistungen dar. Die Originalinhalte verbleiben bei den jeweiligen Autoren und Publikationen. Verlinkungen erfolgen im Rahmen des Zitatrechts.</p>
+    <p>Das Scraping, systematische Auslesen oder automatisierte Vervielfältigen der Inhalte von flinkbase.com ist ohne vorherige schriftliche Genehmigung nicht gestattet.</p>
+
+    <h2>7. Verfügbarkeit</h2>
+    <p>Wir bemühen uns um eine hohe Verfügbarkeit des Dienstes, können diese jedoch nicht garantieren. Wartungsarbeiten, technische Störungen oder Änderungen an den zugrundeliegenden Datenquellen (Hacker News API, Google Gemini) können zu vorübergehenden Einschränkungen führen.</p>
+
+    <h2>8. Haftung</h2>
+    <p>Die Nutzung des Dienstes erfolgt auf eigenes Risiko. Wir haften nicht für Schäden, die aus der Nutzung oder Nicht-Nutzung der bereitgestellten Informationen entstehen, sofern kein vorsätzliches oder grob fahrlässiges Verhalten vorliegt.</p>
+    <p>Für die Inhalte verlinkter externer Websites sind deren Betreiber verantwortlich.</p>
+
+    <h2>9. Änderungen der Nutzungsbedingungen</h2>
+    <p>Wir behalten uns vor, diese Nutzungsbedingungen jederzeit zu ändern. Die aktuelle Version ist stets unter <a href="/agb">flinkbase.com/agb</a> abrufbar.</p>
+
+    <h2>10. Anwendbares Recht</h2>
+    <p>Es gilt das Recht der Bundesrepublik Deutschland.</p>
+
+    <h2>11. Kontakt</h2>
+    <p>Jan-Tristan Rudat<br />Eggerstedter Weg 18, 25421 Pinneberg<br />E-Mail: jr@dangerously.ai</p>
+  </div>
+</Layout>
