@@ -41,6 +41,31 @@ describe("HN Client", () => {
     });
   });
 
+  describe("fetchTopStoryIds — error path", () => {
+    it("throws on non-ok response", async () => {
+      mockFetch.mockResolvedValueOnce({ ok: false, status: 500 });
+      await expect(fetchTopStoryIds(10)).rejects.toThrow("HN API error: 500");
+    });
+  });
+
+  describe("fetchStoryDetails — error path", () => {
+    it("throws on non-ok response", async () => {
+      mockFetch.mockResolvedValueOnce({ ok: false, status: 404 });
+      await expect(fetchStoryDetails(999)).rejects.toThrow("HN API error for item 999: 404");
+    });
+
+    it("defaults score and descendants to 0 when missing", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ id: 789, title: "Minimal story" }),
+      });
+      const result = await fetchStoryDetails(789);
+      expect(result.score).toBe(0);
+      expect(result.descendants).toBe(0);
+      expect(result.url).toBeNull();
+    });
+  });
+
   describe("fetchTopStories", () => {
     it("fetches IDs then details in parallel", async () => {
       mockFetch.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve([1, 2, 3]) });

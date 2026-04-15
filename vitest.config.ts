@@ -18,6 +18,12 @@ export default defineConfig({
     globals: true,
     testTimeout: 10000,
     env: loadEnvFile(resolve(process.cwd(), ".env")),
+    coverage: {
+      provider: "v8",
+      include: ["src/lib/**/*.ts", "src/db/queries.ts", "scripts/hn-client.mts", "scripts/ai-filter.mts", "scripts/ai-summarize.mts", "scripts/ai-embed.mts", "scripts/ai-verify.mts"],
+      exclude: ["src/db/schema.ts", "src/db/client.ts", "src/env.d.ts", "src/middleware.ts", "src/pages/**", "src/components/**", "drizzle.config.ts", "tests/**", "scripts/generate-digest.mts", "scripts/verify-digest.mts", "scripts/send-newsletter.mts", "scripts/seed.mts"],
+      reporter: ["text", "text-summary"],
+    },
   },
   resolve: {
     alias: {
