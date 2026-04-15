@@ -42,4 +42,5 @@ const seo = pageSEO(query ? `"${query}" — ${strings.searchTitle}` : strings.se
   )}
   {query && !searchError && results.length === 0 && <p class="text-zinc-500">{strings.noResults}</p>}
   {searchError && <p class="text-red-600">Suche fehlgeschlagen. Bitte versuche es erneut.</p>}
+  {query && <p class="mt-4 text-xs text-zinc-400">Debug: searchError={String(searchError)}, results={results.length}</p>}
 </Layout>
