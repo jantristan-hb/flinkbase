@@ -97,14 +97,18 @@ async function main() {
   console.log(`  ID: ${result.digest.id}`);
   console.log(`  URL: /digest/${dateStr}-${slot}`);
 
-  // 9. Send newsletter to confirmed subscribers
-  const subs = await getConfirmedSubscribers();
-  if (subs.length > 0) {
-    console.log(`\n[7/7] Sending newsletter to ${subs.length} subscribers...`);
-    const { sent, failed } = await sendDigestToAll(subs, result.digest, result.stories);
-    console.log(`  → ${sent} sent, ${failed} failed`);
+  // 9. Send newsletter only for abend digest
+  if (slot === "abend") {
+    const subs = await getConfirmedSubscribers();
+    if (subs.length > 0) {
+      console.log(`\n[7/7] Sending newsletter to ${subs.length} subscribers...`);
+      const { sent, failed } = await sendDigestToAll(subs, result.digest, result.stories);
+      console.log(`  → ${sent} sent, ${failed} failed`);
+    } else {
+      console.log("\n[7/7] No confirmed subscribers — skipping newsletter.");
+    }
   } else {
-    console.log("\n[7/7] No confirmed subscribers — skipping newsletter.");
+    console.log("\n[7/7] Newsletter only sent with abend digest — skipping.");
   }
 }
 
