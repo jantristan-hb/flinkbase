@@ -1,0 +1,32 @@
+{
+  "name": "flinkbase",
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@astrojs/node": "^10.0.5",
+    "@astrojs/sitemap": "^3.7.2",
+    "@google/generative-ai": "^0.24.1",
+    "@tailwindcss/vite": "^4.2.2",
+    "astro": "^6.1.7",
+    "drizzle-orm": "^0.45.2",
+    "postgres": "^3.4.9",
+    "tailwindcss": "^4.2.2"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "drizzle-kit": "^0.31.10",
+    "tsx": "^4.21.0",
+    "vitest": "^4.1.4"
+  }
+}
