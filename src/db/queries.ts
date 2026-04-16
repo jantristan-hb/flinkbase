@@ -226,3 +226,24 @@ export async function getAllDigestSlugs() {
     .from(digests)
     .orderBy(desc(digests.publishedAt));
 }
+
+export async function getRecentHnUrls(hours: number = 24): Promise<Set<string>> {
+  const cutoff = new Date();
+  cutoff.setHours(cutoff.getHours() - hours);
+  const result = await db
+    .select({ hnUrl: stories.hnUrl })
+    .from(stories)
+    .innerJoin(digests, eq(stories.digestId, digests.id))
+    .where(gt(digests.publishedAt, cutoff));
+  return new Set(result.map((r) => r.hnUrl));
+}
+
+export async function hasEmbeddingForHnUrl(hnUrl: string): Promise<boolean> {
+  const result = await db
+    .select({ id: storyEmbeddings.id })
+    .from(storyEmbeddings)
+    .innerJoin(stories, eq(storyEmbeddings.storyId, stories.id))
+    .where(eq(stories.hnUrl, hnUrl))
+    .limit(1);
+  return result.length > 0;
+}

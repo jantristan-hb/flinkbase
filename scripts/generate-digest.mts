@@ -3,7 +3,7 @@ import { fetchTopStories } from "./hn-client.mts";
 import { filterForAIRelevance } from "./ai-filter.mts";
 import { summarizeStory, summarizeDaySummary } from "./ai-summarize.mts";
 import { generateEmbeddings } from "./ai-embed.mts";
-import { insertDigestWithStories, getConfirmedSubscribers, getStoriesForDigest } from "../src/db/queries";
+import { insertDigestWithStories, getConfirmedSubscribers, getStoriesForDigest, getRecentHnUrls, hasEmbeddingForHnUrl } from "../src/db/queries";
 import { sendDigestToAll } from "../src/lib/mail";
 import { runVerification } from "./ai-verify.mts";
 
@@ -41,13 +41,19 @@ async function main() {
   const filtered = await filterForAIRelevance(hnStories);
   console.log(`  → ${filtered.length} AI-relevant stories found`);
 
-  if (filtered.length === 0) {
-    console.log("  ⚠ No AI-relevant stories found. Skipping digest.");
+  // 2b. Dedup: remove stories already in recent digests (24h)
+  const recentUrls = await getRecentHnUrls(24);
+  const deduped = filtered.filter((f) => !recentUrls.has(f.story.hnUrl));
+  const skipped = filtered.length - deduped.length;
+  if (skipped > 0) console.log(`  → ${skipped} duplicates from last 24h removed`);
+
+  if (deduped.length === 0) {
+    console.log("  ⚠ No new AI-relevant stories found. Skipping digest.");
     process.exit(0);
   }
 
   // 3. Take top 7
-  const top7 = filtered.slice(0, 7);
+  const top7 = deduped.slice(0, 7);
   console.log(`  → Top ${top7.length} selected`);
 
   // 4. Summarize each story
@@ -97,17 +103,23 @@ async function main() {
   const { verified, rejected } = await runVerification(result.digest.id);
   console.log(`  → ${verified} verified, ${rejected} rejected`);
 
-  // 9. Generate embeddings for verified stories (after correction)
+  // 9. Generate embeddings for verified stories (skip if HN URL already has embedding)
   const verifiedStories = await getStoriesForDigest(result.digest.id);
-  console.log(`\n[7/8] Generating embeddings for ${verifiedStories.length} verified stories...`);
-  if (verifiedStories.length > 0) {
-    const embeddingTexts = verifiedStories.map((s) => `${s.headlineDe} ${s.summary}`);
+  const newStories = [];
+  for (const s of verifiedStories) {
+    if (!(await hasEmbeddingForHnUrl(s.hnUrl))) {
+      newStories.push(s);
+    }
+  }
+  const dupeEmbeddings = verifiedStories.length - newStories.length;
+  console.log(`\n[7/8] Generating embeddings for ${newStories.length} new stories (${dupeEmbeddings} already in RAG)...`);
+  if (newStories.length > 0) {
+    const embeddingTexts = newStories.map((s) => `${s.headlineDe} ${s.summary}`);
     const embeddings = await generateEmbeddings(embeddingTexts);
-    // Insert embeddings for verified stories
     const { storyEmbeddings } = await import("../src/db/schema");
     const { db: database } = await import("../src/db/client");
     await database.insert(storyEmbeddings).values(
-      verifiedStories.map((s, i) => ({
+      newStories.map((s, i) => ({
         storyId: s.id,
         embedding: embeddings[i],
         contentText: embeddingTexts[i],
